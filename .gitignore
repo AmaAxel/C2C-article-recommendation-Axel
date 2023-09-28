@@ -1,3 +1,7 @@
 cheatsheet.txt
 gremlin_queries.txt
 C2C_sujet.odt
+.vscode/
+Azure Functions/.venv/
+Azure Functions/.funcignore
+.~lock*
