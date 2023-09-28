@@ -1,0 +1,14 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "events",
+      "direction": "in",
+      "eventHubName": "article-generation-solution",
+      "connection": "eventhub_connection_string_listener",
+      "cardinality": "many",
+      "consumerGroup": "$Default"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "timer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 0 */12 * * *"
+    },
+
+    {
+      "name": "outputMessage",
+      "type": "eventHub",
+      "direction": "out",
+      "eventHubName": "eventhub_article_generation",
+      "connection": "eventhub_connection_string_sender"
+    }
+  ]
+}
