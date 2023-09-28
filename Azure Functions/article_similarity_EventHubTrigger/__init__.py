@@ -162,8 +162,8 @@ async def main(events: func.EventHubEvent):
         for event in events:
 
             ############# SECTION TO BE COMPLETED BY CONSULTANT ################
-            #########
-            #########
+            message_body = event.get_body().decode('utf-8')
+            new_article = json.loads(message_body)
             logging.info("New Article:")
             logging.info(new_article)
             ############# SECTION TO BE COMPLETED BY CONSULTANT ################
