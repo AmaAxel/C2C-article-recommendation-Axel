@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "eventhubhandson_listen_policy_EVENTHUB": "Endpoint=sb://event-hub-hands-on.servicebus.windows.net/;SharedAccessKeyName=listen_policy;SharedAccessKey=mVk0WC/98YUVP9ymGRxRp5ZjmY4EmnDoN+AEhITSquk=;EntityPath=article-generation-solution"
+  }
+}
