@@ -15,7 +15,7 @@ from gremlin_python.process.anonymous_traversal import traversal
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
 from sentence_transformers import SentenceTransformer, util
 
-from src.label_article import *
+from .label_article import *
 
 ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 cosmosDB_endpoint =  os.environ.get("cosmosDB_endpoint")

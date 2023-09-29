@@ -16,7 +16,7 @@ from newsapi.newsapi_client import NewsApiClient
 import azure.functions as func
 import os
 
-from src.clean_article import *
+from .clean_article import *
 
 
 def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
