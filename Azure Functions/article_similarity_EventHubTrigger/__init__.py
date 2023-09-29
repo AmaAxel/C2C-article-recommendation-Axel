@@ -15,6 +15,7 @@ from gremlin_python.process.anonymous_traversal import traversal
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
 from sentence_transformers import SentenceTransformer, util
 
+from . import label_article
 from label_article import *
 
 ############# SECTION TO BE COMPLETED BY CONSULTANT ################
