@@ -78,7 +78,7 @@ async def insert_article(new_article):
         query = "g.V().hasLabel('article')"
         for label in best_labels:
             query += ".has('{}', lte(2))".format(label)
-        query += ".limit(200).values('title').fold()"
+        query += ".limit(400).values('title').fold()"
 
         # Get the same-category articles
         all_titles = gremlin_client.submit(query)
