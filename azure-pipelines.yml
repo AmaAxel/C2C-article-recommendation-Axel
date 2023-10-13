@@ -10,10 +10,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    python -m venv venv
+    source venv/bin/activate
+    pip install -r Azure Functions/requirements.txt
+    pip install pytest
+    pytest Azure Functions/tests/
+  displayName: 'Run Tests'
