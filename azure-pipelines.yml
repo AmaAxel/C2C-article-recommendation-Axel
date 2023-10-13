@@ -13,7 +13,7 @@ steps:
 - script: |
     python -m venv venv
     source venv/bin/activate
-    pip install -r Azure Functions/requirements.txt
+    pip install -r Azure\ Functions/requirements.txt
     pip install pytest
-    pytest Azure Functions/tests/
+    pytest Azure\ Functions/tests/
   displayName: 'Run Tests'
