@@ -18,7 +18,19 @@ def remove_in_between(text, start_str, end_str):
 
 
 def add_space_after_dot(text):
-    return re.sub(r'\.(?! )', r'. ', text)
+
+    # remove all the spaces before a dots
+    text = re.sub(r'\s+\.', '.', text)
+
+    # remove all the spaces before a dots
+    text = re.sub(r'\.\s+', '.', text)
+
+    # remove multiple dots
+    text = re.sub(r'\.{2,}', '.', text)
+
+    # add a space after each dot
+    text = re.sub(r'\.(?=\S)', '. ', text)
+    return text
 
 
 def clean_end_of_article(text):
@@ -61,6 +73,8 @@ def clean_start_of_article(text):
         pass
 
     text = text.replace('Media caption, ', '')
+    text = text.replace('Media caption', '')
+
     return text
 
 
@@ -82,6 +96,6 @@ def clean_content(text):
     text = clean_end_of_article(text)
     text = clean_start_of_article(text)
     text = clean_middle_of_article(text)
-    # text = add_space_after_dot(text)
+    text = add_space_after_dot(text)
     return text
    
