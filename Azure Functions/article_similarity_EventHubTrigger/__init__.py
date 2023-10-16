@@ -26,7 +26,13 @@ cosmosDB_key = os.environ.get("cosmosDB_key")
 
 eventhub_connection_string = os.environ.get("eventhub_connection_string_listener")
 eventhub_name = os.environ.get("eventhub_article_generation")
-sim_threshold = float(os.environ.get("similarity_threshold"))
+similarity_threshold_str = os.environ.get("similarity_threshold")
+if similarity_threshold_str is not None:
+    sim_threshold = float(similarity_threshold_str)
+else:
+    # Handle the case when the environment variable is not set or is None
+    sim_threshold = 0.4  # Set a default value or handle it as needed
+
 ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 consumer_group = "$Default"
 
