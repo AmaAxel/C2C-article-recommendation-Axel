@@ -4,4 +4,8 @@ C2C_sujet.odt
 .vscode/
 Azure Functions/.venv/
 Azure Functions/.funcignore
+Azure Functions/article_generation_TimerTrigger/__pycache__/
+Azure Functions/article_similarity_EventHubTrigger/__pycache__/
 .~lock.C2C_sujet.odt#
+*.pyc
+*.pyo
