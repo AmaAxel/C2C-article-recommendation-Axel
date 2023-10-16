@@ -15,7 +15,8 @@ from gremlin_python.process.anonymous_traversal import traversal
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
 from sentence_transformers import SentenceTransformer, util
 
-from .label_article import *
+from .label_article import get_labels, get_best_labels
+from .compute_similarity import compute_similarity
 
 ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 cosmosDB_endpoint =  os.environ.get("cosmosDB_endpoint")
@@ -32,7 +33,11 @@ consumer_group = "$Default"
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 
+
 async def insert_article(new_article):
+
+
+    ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 
     # Create a Gremlin client and connect to the Cosmos DB graph
     gremlin_client = client.Client(cosmosDB_endpoint, 'g',
@@ -110,21 +115,13 @@ async def insert_article(new_article):
         # Loop over all titles in the list and compute similarity
         for title in all_titles:
 
-            ############# SECTION TO BE COMPLETED BY CONSULTANT ################
-
             # Query the content property of the article with the matching title
             query = "g.V().hasLabel('article').has('title', title).project('title', 'description', 'content').by('title').by('content').by('description').fold()"
             result = gremlin_client.submit(query, {'title': title}).all().result()
             # Extract the nested dictionary
-            nested_dict = result[0][0]
+            old_article = result[0][0]
 
-            # Concatenate 'title', 'description', and 'content'
-            content_enriched = nested_dict['title'] + ' ' + nested_dict['description'] + ' ' + nested_dict['content']
-            new_content_enriched = new_article['title'] + ' ' + new_article['description'] + ' ' + new_article['content']
-
-            embedding_article = model.encode(content_enriched, convert_to_tensor=True)
-            embedding_new_article = model.encode(new_content_enriched, convert_to_tensor=True)
-            sim = util.pytorch_cos_sim(embedding_new_article, embedding_article)[0][0].item()
+            sim = compute_similarity(model, old_article, new_article)
 
             # prepare relationship query to used in between similar articles
             relationship_query = """
@@ -146,13 +143,14 @@ async def insert_article(new_article):
 
                 logging.info('**INFO: Similarity found %s', round(sim, 2))
 
-            ############# SECTION TO BE COMPLETED BY CONSULTANT ################
-
     else:
         logging.info('**INFO: Article is already in Database')
 
     # Close the Gremlin client connection
     gremlin_client.close()
+
+    ############# SECTION TO BE COMPLETED BY CONSULTANT ################
+
 
 
 nest_asyncio.apply()
