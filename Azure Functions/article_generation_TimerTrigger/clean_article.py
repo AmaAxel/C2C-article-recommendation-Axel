@@ -3,6 +3,7 @@ import sys
 import datetime 
 import re
 
+
 def remove_in_between(text, start_str, end_str):
     
     start_index = text.find(start_str)
