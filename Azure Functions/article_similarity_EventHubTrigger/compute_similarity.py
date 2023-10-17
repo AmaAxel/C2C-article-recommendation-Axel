@@ -5,6 +5,9 @@ from sentence_transformers import SentenceTransformer, util
 def compute_similarity(model, old_article, new_article):
 
     """"
+
+    Information about the model : https://huggingface.co/tasks/sentence-similarity
+    
     Old and new articles are dictionaries with keys title, description, publishedAt and content
     old_article is an article already in the graph database
     new_article is the incoming article that we want to compare to the old article already in the database

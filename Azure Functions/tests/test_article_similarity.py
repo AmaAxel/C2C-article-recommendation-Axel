@@ -10,6 +10,11 @@ from sentence_transformers import SentenceTransformer
 
 class TestComputeSimilarity(unittest.TestCase):
 
+
+    """
+    This test checks if your compute_similarity() function returns consistent similarity values
+    """
+
     def setUp(self):
         self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
         self.article_A = {

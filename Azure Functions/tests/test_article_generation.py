@@ -9,23 +9,14 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from article_generation_TimerTrigger.clean_article import clean_content
 from article_generation_TimerTrigger.extract_content import extract_to_dict
 
-class TestCleanContentFunction(unittest.TestCase):
-    def test_clean_content_removes_html_tags(self):
-        # Input content with HTML tags
-        input_content = "This is sample of text.Media caption .End of sample..."
-
-        # Expected cleaned content without HTML tags
-        expected_cleaned_content = "This is sample of text. End of sample."
-
-        # Call the clean_content function
-        cleaned_content = clean_content(input_content)
-
-        # Assert that the function cleaned the content as expected
-        self.assertEqual(cleaned_content, expected_cleaned_content)
 
 
 class TestExtractedArticle(unittest.TestCase):
 
+    """"
+    This test checks that the data we are scrapping from the BBC is consistant with the 
+    dictionary format our functions are using
+    """
     def test_extracted_article_structure(self):
 
         newsapi_key = '6fdb9fb9f5154d1c8073d732a744fb9f'
@@ -52,6 +43,30 @@ class TestExtractedArticle(unittest.TestCase):
                 self.assertNotEqual(value, '', f"Value for '{key}' is an empty string.")
 
             break
+
+
+class TestCleanContentFunction(unittest.TestCase):
+
+    """
+    This test checks if the cleaned_content() function cleans the text data 
+    of the articles in the way it's supposed to
+    """
+    def test_clean_content_removes_html_tags(self):
+        # Input content with HTML tags
+        input_content = "This is sample of text.Media caption .End of sample..."
+
+        # Expected cleaned content without HTML tags
+        expected_cleaned_content = "This is sample of text. End of sample."
+
+        ############# SECTION TO BE COMPLETED BY CONSULTANT ################
+
+        # Call the clean_content function
+        cleaned_content = clean_content(input_content)
+
+        # Assert that the function cleaned the content as expected
+        self.assertEqual(cleaned_content, expected_cleaned_content)
+
+        ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 
 if __name__ == '__main__':
     unittest.main()
