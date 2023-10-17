@@ -3,35 +3,39 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-pr:
-- '*'
-
-pool:
-  vmImage: ubuntu-latest
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
 
 jobs:
-- job: RunTestsAndMerge
-  steps:
-  - checkout: self
+  RunTestsAndMerge:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
 
-  - script: |
-      # Set up your virtual environment and install dependencies
-      python -m venv venv
-      source venv/bin/activate
-      pip install -r Azure\ Functions/requirements.txt
-      pip install pytest
-      
-      # Run tests
-      pytest Azure\ Functions/tests/
-    displayName: 'Run Tests'
+    - name: Set up Python environment and install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r Azure\ Functions/requirements.txt
+        pip install pytest
+      shell: bash
 
-  - script: |
-      # If the tests pass, merge the PR into master
-      if [ $(Build.Reason) == 'PullRequest' ] && [ $(Build.ReasonForWaiting) == 'PullRequest' ] && [ $(Build.SourceBranch) == 'refs/pull/$(System.PullRequest.PullRequestId)/merge' ]; then
-          git checkout master
-          git merge --no-ff --no-commit $(Build.SourceBranch)
-          git commit -m "Merge PR #$(System.PullRequest.PullRequestId)"
-          git push
-      fi
-    displayName: 'Merge to Master'
-    condition: succeeded()
+    - name: Run Tests
+      run: pytest Azure\ Functions/tests/
+      shell: bash
+
+    - name: Merge to Master
+      if: startsWith(github.ref, 'refs/pull/') && github.event_name == 'push'
+      run: |
+        git checkout master
+        git pull origin master
+        git merge --no-ff --no-commit $GITHUB_REF
+        git commit -m "Merge PR #$GITHUB_REF"
+        git push
+      shell: bash
