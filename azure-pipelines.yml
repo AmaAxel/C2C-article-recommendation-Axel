@@ -50,7 +50,7 @@ stages:
         versionSpec: 3.8 # Functions V2 supports Python 3. as of today
 
     - bash: |
-        pip install --target="./.python_packages/lib/site-packages" -r Azure\ Functions/requirements.txt
+        pip install --target="./.python_packages/lib/site-packages" -r requirements.txt
       workingDirectory: $(workingDirectory)
       displayName: 'Install application dependencies'
 
