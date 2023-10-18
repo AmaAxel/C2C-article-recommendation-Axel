@@ -1,0 +1,37 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pr:
+- 'master'
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: RunTestsAndMerge
+  steps:
+  - checkout: self
+
+  - script: |
+      # Set up your virtual environment and install dependencies
+      python -m venv venv
+      source venv/bin/activate
+      pip install -r Azure\ Functions/requirements.txt
+      pip install pytest
+      
+      # Run tests
+      pytest Azure\ Functions/tests/
+    displayName: 'Run Tests'
+
+  - script: |
+      # If the tests pass, merge the PR into master
+      if [ $(Build.Reason) == 'PullRequest' ] && [ $(Build.ReasonForWaiting) == 'PullRequest' ] && [ $(Build.SourceBranch) == 'refs/pull/$(System.PullRequest.PullRequestId)/merge' ]; then
+          git checkout master
+          git merge --no-ff --no-commit $(Build.SourceBranch)
+          git commit -m "Merge PR #$(System.PullRequest.PullRequestId)"
+          git push
+      fi
+    displayName: 'Merge to Master'
+    condition: succeeded()
