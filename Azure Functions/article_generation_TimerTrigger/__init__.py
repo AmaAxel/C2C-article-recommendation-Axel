@@ -16,6 +16,7 @@ from newsapi.newsapi_client import NewsApiClient
 import azure.functions as func
 import os
 
+
 from .clean_article import clean_content
 from .extract_content import extract_to_dict
 
