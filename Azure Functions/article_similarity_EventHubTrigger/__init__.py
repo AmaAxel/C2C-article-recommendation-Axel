@@ -18,6 +18,7 @@ from sentence_transformers import SentenceTransformer, util
 from .label_article import get_labels, get_best_labels
 from .compute_similarity import compute_similarity
 
+
 ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 cosmosDB_endpoint =  os.environ.get("cosmosDB_endpoint")
 cosmos_database_name =  os.environ.get("cosmos_database_name")
