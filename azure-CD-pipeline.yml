@@ -45,7 +45,7 @@ stages:
       displayName: 'Build extensions'
 
     - task: UsePythonVersion@0
-      displayName: 'Use Python 3.6'
+      displayName: 'Use Python 3.8'
       inputs:
         versionSpec: 3.8 # Functions V2 supports Python 3. as of today
 
