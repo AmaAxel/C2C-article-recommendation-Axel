@@ -44,6 +44,7 @@ def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
 
             logging.info('**INFO - Article generated %s :', article)
 
+            # Let's consider only the article that are long enough (arbitrary length of 500 characters)
             if len(article['content']) > 500:
                 producer = EventHubProducerClient.from_connection_string(event_hub_connection_string, eventhub_name=eventhub_name)
 
