@@ -2,8 +2,6 @@ import unittest
 import sys
 import os
 
-from newsapi.newsapi_client import NewsApiClient
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from article_generation_TimerTrigger.bbc_scraper import BBCArticleScraper
