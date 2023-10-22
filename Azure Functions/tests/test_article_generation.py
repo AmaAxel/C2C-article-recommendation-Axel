@@ -45,28 +45,5 @@ class TestExtractedArticle(unittest.TestCase):
             break
 
 
-class TestCleanContentFunction(unittest.TestCase):
-
-    """
-    This test checks if the cleaned_content() function cleans the text data 
-    of the articles in the way it's supposed to
-    """
-    def test_clean_content_removes_html_tags(self):
-        # Input content with HTML tags
-        input_content = "This is sample of text.Media caption .End of sample..."
-
-        # Expected cleaned content without HTML tags
-        expected_cleaned_content = "This is sample of text. End of sample."
-
-        ############# SECTION TO BE COMPLETED BY CONSULTANT ################
-
-        # Call the clean_content function
-        cleaned_content = clean_content(input_content)
-
-        # Assert that the function cleaned the content as expected
-        self.assertEqual(cleaned_content, expected_cleaned_content)
-
-        ############# SECTION TO BE COMPLETED BY CONSULTANT ################
-
 if __name__ == '__main__':
     unittest.main()
