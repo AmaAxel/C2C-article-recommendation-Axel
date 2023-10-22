@@ -30,6 +30,7 @@ def add_space_after_dot(text):
 
     # add a space after each dot
     text = re.sub(r'\.(?=\S)', '. ', text)
+    
     return text
 
 
