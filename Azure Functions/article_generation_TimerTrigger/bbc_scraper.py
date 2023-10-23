@@ -21,22 +21,16 @@ class BBCArticleScraper:
     def clean_bbc_articles(self, article_dict):
         # remove special characters
         text = article_dict['content'].replace('\n', '. ').replace("'", '"')
-        
         # remove all the spaces before a dots
         text = re.sub(r'\s+\.', '.', text)
-        
         # remove all the spaces before a dots
         text = re.sub(r'\.\s+', '.', text)
-        
         # remove multiple dots
         text = re.sub(r'\.{2,}', '.', text)
-        
         # add a space after each dot
         text = re.sub(r'\.(?=\S)', '. ', text)
-        
         # truncate the end of the article as it contains all of of rubbish not related to the article
         shortened_str = text[:-1300]
-        
         # Find the last occurrence of ". "
         last_dot_index = shortened_str.rfind(". ")
         

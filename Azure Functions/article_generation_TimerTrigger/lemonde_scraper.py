@@ -5,6 +5,12 @@ import re
 from datetime import datetime, timedelta
 
 class LeMondeArticleScraper:
+
+    """
+    The scrapper has to a list of dictionaries 
+    with keys 'title', 'publishedAt', 'section', 'URL', 'description' and 'content'
+    """
+
     def __init__(self):
         self.config = Config()
         self.config.memoize_articles = False

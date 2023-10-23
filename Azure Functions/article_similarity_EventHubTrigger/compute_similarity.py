@@ -2,7 +2,7 @@
 from sentence_transformers import SentenceTransformer, util
 
 
-def compute_similarity(model, old_article, new_article):
+def compute_similarity(model, article_A, article_B):
 
     """"
 
@@ -16,8 +16,8 @@ def compute_similarity(model, old_article, new_article):
 
     ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 
-    content_enriched = old_article['title'] + ' ' + old_article['description'] + ' ' + old_article['content']
-    new_content_enriched = new_article['title'] + ' ' + new_article['description'] + ' ' + new_article['content']
+    content_enriched = article_A['title'] + ' ' + article_A['description'] + ' ' + article_A['content']
+    new_content_enriched = article_B['title'] + ' ' + article_B['description'] + ' ' + article_B['content']
 
     embedding_article = model.encode(content_enriched, convert_to_tensor=True)
     embedding_new_article = model.encode(new_content_enriched, convert_to_tensor=True)

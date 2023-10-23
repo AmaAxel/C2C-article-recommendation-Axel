@@ -13,8 +13,7 @@ import datetime
 import re
 import azure.functions as func
 import os
-from utils import lemonde_scraper
-
+from .lemonde_scraper import LeMondeArticleScraper
 
 
 
@@ -26,7 +25,7 @@ def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
     ############# SECTION TO BE COMPLETED BY CONSULTANT ################
     
     # use the bbc_scrapper to extract the BBC articles currently on the website
-    scraper = lemonde_scraper.LeMondeArticleScraper()
+    scraper = LeMondeArticleScraper()
     articles = scraper.scrape_LeMonde_articles()
 
     # iterate through the articles and send the content to Azure Event Hub
