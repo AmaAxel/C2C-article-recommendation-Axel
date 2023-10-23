@@ -5,8 +5,7 @@
 azure-functions
 azure-eventhub
 azure-eventhub-checkpointstoreblob-aio
-newsapi==0.1.1
-newsapi-python==0.2.6
+newspaper3k==0.2.8
 pandas==1.4.0
 numpy==1.22.0
 requests==2.27.1

@@ -13,8 +13,9 @@ import datetime
 import re
 import azure.functions as func
 import os
+from utils import lemonde_scraper
 
-from .bbc_scraper import BBCArticleScraper
+
 
 
 def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
@@ -25,11 +26,11 @@ def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
     ############# SECTION TO BE COMPLETED BY CONSULTANT ################
     
     # use the bbc_scrapper to extract the BBC articles currently on the website
-    bbc_scraper = BBCArticleScraper()
-    articles = bbc_scraper.scrape_bbc_articles()
+    scraper = lemonde_scraper.LeMondeArticleScraper()
+    articles = scraper.scrape_LeMonde_articles()
 
     # iterate through the articles and send the content to Azure Event Hub
-    for article in articles['articles']:
+    for article in articles:
 
         producer = EventHubProducerClient.from_connection_string(event_hub_connection_string, eventhub_name=eventhub_name)
 
