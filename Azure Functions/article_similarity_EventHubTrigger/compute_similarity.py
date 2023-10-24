@@ -8,9 +8,8 @@ def compute_similarity(model, article_A, article_B):
 
     Information about the model : https://huggingface.co/tasks/sentence-similarity
     
-    Old and new articles are dictionaries with keys title, description, publishedAt and content
-    old_article is an article already in the graph database
-    new_article is the incoming article that we want to compare to the old article already in the database
+    Both article_A and article_B are dictionaries with keys 'title', 'publishedAt', 'section', 'URL', 'description' and 'content'
+    The model should use the concatenation of title, description and content of both articles to compute the similarity
     Returns a float (value of similarity between the two articles)
     """
 

@@ -16,7 +16,6 @@ import os
 from .lemonde_scraper import LeMondeArticleScraper
 
 
-
 def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
             
     ############# SECTION TO BE COMPLETED BY CONSULTANT ################
