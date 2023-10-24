@@ -66,33 +66,24 @@ async def insert_article(new_article):
 
         # Define the Gremlin query to insert the article vertex
         # Create a dictionary of properties for the new article
-        properties = {
-                    'title': new_article['title'],
-                    'publishedAt': new_article['publishedAt'],
-                    'section': new_article['section'],
-                    'URL': new_article['URL'],
-                    'description': new_article['description'],
-                    'content': new_article['content']
-        }
+        new_title = new_article['title']
+        new_publishedAt = new_article['publishedAt']
+        new_section = new_article['section']
+        new_URL = new_article['URL']
+        new_description = new_article['description']
+        new_content = new_article['content']
 
-        logging.info('**INFO: PROPERTIES')
-        logging.info(properties)
-            
-        # Construct the Gremlin query with the properties
-        insert_query = """
+        insert_query = f"""
                     g.addV('article')
-                        .property('title', title)
-                        .property('publishedAt', publishedAt)
-                        .property('section', section)
-                        .property('URL', URL)
-                        .property('description', description)
-                        .property('content', content)
-                        .property('partitionKey', partitionKey)
+                        .property('title', '{new_title}')
+                        .property('publishedAt', '{new_publishedAt}')
+                        .property('section', '{new_section}')
+                        .property('URL', '{new_URL}')
+                        .property('description', '{new_description}')
+                        .property('content', '{new_content}')
+                        .property('partitionKey', '{new_publishedAt}')
                     """
-
-        # Execute the Gremlin query with the given article properties
-        gremlin_client.submitAsync(insert_query, properties)
-        logging.info('**INFO: Article successfully inserted')
+        gremlin_client.submitAsync(insert_query)
 
         # Delete latest article (replacing the oldest article with the newest)
         # query_delete_last_article = "g.V().hasLabel('article').order().by('publishedAt').limit(1).sideEffect(drop())"
@@ -152,7 +143,6 @@ async def insert_article(new_article):
 
 nest_asyncio.apply()
 async def main(events: func.EventHubEvent):
-
     try:
         for event in events:
 
@@ -171,3 +161,8 @@ async def main(events: func.EventHubEvent):
         logging.error(f"Error processing event: {str(e)}")
 
 
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        logging.error(f"Error running main: {str(e)}")

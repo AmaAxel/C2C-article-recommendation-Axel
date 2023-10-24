@@ -18,13 +18,28 @@ class LeMondeArticleScraper:
         self.main_url = 'https://www.lemonde.fr/en/'
 
     def clean_LeMonde_articles(self, article_dict):
+        # remove special characters
         text = article_dict['content'].replace('\n', '. ').replace("'", '"')
+        # remove all the spaces before a dots
         text = re.sub(r'\s+\.', '.', text)
+        # remove all the spaces before a dots
         text = re.sub(r'\.\s+', '.', text)
+        # remove multiple dots
         text = re.sub(r'\.{2,}', '.', text)
+        # add a space after each dot
         text = re.sub(r'\.(?=\S)', '. ', text)
+
+        # remove the end of the article (about subscribing and other non-relevant text)
+        index = text.find("Already a subscriber ?")
+        # Check if the substring is found
+        if index != -1:
+            # Extract the portion of the string before the target substring
+            text = text[:index]
+        else:
+            # If the substring is not found, keep the original string
+            text = text
+
         article_dict['content'] = text
-        return article_dict
 
     def get_LeMonde_article_content(self, url):
         response = requests.get(url)
