@@ -41,6 +41,8 @@ class LeMondeArticleScraper:
 
         article_dict['content'] = text
 
+        return article_dict
+
     def get_LeMonde_article_content(self, url):
         response = requests.get(url)
         if response.status_code == 200:
