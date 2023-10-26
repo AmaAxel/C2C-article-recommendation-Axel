@@ -29,7 +29,7 @@ class BBCArticleScraper:
 
         return validity
 
-    def clean_bbc_articles(self, article_dict):
+    def clean_articles(self, article_dict):
         # remove special characters
         text = article_dict['content'].replace('\n', '. ').replace("'", '"')
         # remove all the spaces before a dots
@@ -61,7 +61,7 @@ class BBCArticleScraper:
         return article_dict
 
 
-    def get_bbc_article_content(self, url):
+    def get_article_content(self, url):
         # Send an HTTP GET request to the URL
         response = requests.get(url)
 
@@ -84,7 +84,7 @@ class BBCArticleScraper:
             return article_content
 
 
-    def scrape_bbc_articles(self):
+    def scrape_articles(self):
         # Fetch the BBC website
         response = requests.get(self.main_url)
         html = response.text
@@ -117,7 +117,7 @@ class BBCArticleScraper:
                 publishedAt = article.publish_date
 
                 # article.text does not contain the whole article for the bbc
-                content = self.get_bbc_article_content(url)
+                content = self.get_article_content(url)
 
                 # Check if publishedAt is None and set it to the current date if so
                 if publishedAt is None:
@@ -132,7 +132,7 @@ class BBCArticleScraper:
                     'content': content
                 }
                 
-                article_dict = self.clean_bbc_articles(article_dict)
+                article_dict = self.clean_articles(article_dict)
                 validity = self.check_validity(article_dict)
 
                 if validity:

@@ -44,7 +44,7 @@ class LeMondeArticleScraper:
                 text = text[index:]
         return text
     
-    def clean_LeMonde_articles(self, article_dict):
+    def clean_articles(self, article_dict):
         # remove special characters
         text = article_dict['content'].replace('\n', '. ').replace("'", '"')
         # remove all the spaces before a dots
@@ -80,7 +80,7 @@ class LeMondeArticleScraper:
 
         return article_dict
 
-    def get_LeMonde_article_content(self, url):
+    def get_article_content(self, url):
         response = requests.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -88,7 +88,7 @@ class LeMondeArticleScraper:
             article_content = '\n'.join([element.get_text() for element in content_elements])
             return article_content
 
-    def scrape_LeMonde_articles(self):
+    def scrape_articles(self):
         response = requests.get(self.main_url)
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
@@ -109,7 +109,7 @@ class LeMondeArticleScraper:
                 article.parse()
 
                 description = article.meta_data['og']['description']
-                content = self.get_LeMonde_article_content(url)
+                content = self.get_article_content(url)
                 title = article.title
                 publishedAt = article.meta_data['og']['article']['published_time']
                 publishedAt = datetime.fromisoformat(publishedAt).strftime('%Y-%m-%d')
@@ -124,7 +124,7 @@ class LeMondeArticleScraper:
                     'content': content
                 }
 
-                article_dict = self.clean_LeMonde_articles(article_dict)
+                article_dict = self.clean_articles(article_dict)
                 validity = self.check_validity(article_dict)
 
                 if validity:
