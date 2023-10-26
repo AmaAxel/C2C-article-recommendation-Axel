@@ -18,8 +18,8 @@ class TestExtractedArticle(unittest.TestCase):
         self.bbc_scraper = BBCArticleScraper()
         self.lemonde_scraper = LeMondeArticleScraper()
 
-    def test_extracted_article_structure(self, scraper):
-        articles = scraper.scrape_articles()
+    def test_extracted_bbc_article_structure(self):
+        articles = self.bbc_scraper.scrape_articles()
 
         for article in articles:
             self.assertIsInstance(article, dict)
@@ -31,11 +31,18 @@ class TestExtractedArticle(unittest.TestCase):
             for key, value in article.items():
                 self.assertNotEqual(value, '', f"Value for '{key}' is an empty string.")
 
-    def test_extracted_bbc_article_structure(self):
-        self.test_extracted_article_structure(self.bbc_scraper)
-
     def test_extracted_lemonde_article_structure(self):
-        self.test_extracted_article_structure(self.lemonde_scraper)
+        articles = self.lemonde_scraper.scrape_articles()
+
+        for article in articles:
+            self.assertIsInstance(article, dict)
+
+            expected_keys = ['title', 'publishedAt', 'section', 'URL', 'description', 'content']
+            for key in expected_keys:
+                self.assertIn(key, article)
+
+            for key, value in article.items():
+                self.assertNotEqual(value, '', f"Value for '{key}' is an empty string.")
 
 if __name__ == '__main__':
     unittest.main()
