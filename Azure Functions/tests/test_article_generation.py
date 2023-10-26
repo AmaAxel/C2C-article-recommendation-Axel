@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from article_generation_TimerTrigger.bbc_scraper import BBCArticleScraper
 from article_generation_TimerTrigger.lemonde_scraper import LeMondeArticleScraper
