@@ -73,14 +73,15 @@ async def insert_article(new_article):
         new_description = new_article['description']
         new_content = new_article['content']
 
+
         insert_query = f"""
                     g.addV('article')
-                        .property('title', '{new_title}')
+                        .property('title', '''{new_title}''')
                         .property('publishedAt', '{new_publishedAt}')
                         .property('section', '{new_section}')
                         .property('URL', '{new_URL}')
-                        .property('description', '{new_description}')
-                        .property('content', '{new_content}')
+                        .property('description', '''{new_description}''')
+                        .property('content', '''{new_content}''')
                         .property('partitionKey', '{new_publishedAt}')
                     """
         gremlin_client.submitAsync(insert_query)

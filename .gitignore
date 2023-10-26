@@ -9,3 +9,4 @@ Azure Functions/article_similarity_EventHubTrigger/__pycache__/
 .~lock.C2C_sujet.odt#
 *.pyc
 *.pyo
+Azure Functions/article_generation_TimerTrigger/__pycache__/__init__.cpython-38.pyc

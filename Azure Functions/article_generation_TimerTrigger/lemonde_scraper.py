@@ -3,6 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime, timedelta
+import logging
+
 
 class LeMondeArticleScraper:
 
@@ -17,6 +19,31 @@ class LeMondeArticleScraper:
         self.config.language = 'en'
         self.main_url = 'https://www.lemonde.fr/en/'
 
+    def check_validity(self, article_dict):
+        validity = True
+        yesterday_date = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
+        if len(article_dict['content']) < 1000 \
+                or article_dict['publishedAt'] != yesterday_date \
+                or 'Video' in article_dict['description'] \
+                or 'Lecture du Monde en cours sur un autre appareil' in article_dict['content']:
+            validity = False
+        
+        return validity
+    
+    def remove_text_before(self, text, substrings):
+        for substring in substrings:
+            index = text.find(substring)
+            if index != -1:
+                text = text[index + len(substring):]
+        return text
+    
+    def remove_text_after(self, text, substrings):
+        for substring in substrings:
+            index = text.find(substring)
+            if index != -1:
+                text = text[index:]
+        return text
+    
     def clean_LeMonde_articles(self, article_dict):
         # remove special characters
         text = article_dict['content'].replace('\n', '. ').replace("'", '"')
@@ -28,16 +55,26 @@ class LeMondeArticleScraper:
         text = re.sub(r'\.{2,}', '.', text)
         # add a space after each dot
         text = re.sub(r'\.(?=\S)', '. ', text)
+        # finally replace double quotes by simple quotes back
+        text = text.replace('"', "'")
 
-        # remove the end of the article (about subscribing and other non-relevant text)
-        index = text.find("Already a subscriber ?")
-        # Check if the substring is found
-        if index != -1:
-            # Extract the portion of the string before the target substring
-            text = text[:index]
-        else:
-            # If the substring is not found, keep the original string
-            text = text
+        # remove the beginning of the article (about the main headlines/unrelated to article)
+        substrings_remove_before = [
+            ". Subscribers only.",
+            " Le Monde with AFP. ",
+            " Le Monde. "
+        ]
+        text = self.remove_text_before(text, substrings_remove_before)
+
+        # remove everything that is after those substrings (about the main headlines)
+        substrings_remove_after = [
+            " The rest is for subscribers only",
+            "Lecture du Monde en cours sur un autre appareil"
+        ]
+        # Already a subscriber ? Sign in
+
+
+        text = self.remove_text_after(text, substrings_remove_after)
 
         article_dict['content'] = text
 
@@ -55,7 +92,6 @@ class LeMondeArticleScraper:
         response = requests.get(self.main_url)
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
-        yesterday_date = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
 
         article_list = []
 
@@ -89,12 +125,13 @@ class LeMondeArticleScraper:
                 }
 
                 article_dict = self.clean_LeMonde_articles(article_dict)
+                validity = self.check_validity(article_dict)
 
-                if len(content) > 1000 and publishedAt == yesterday_date:
+                if validity:
                     article_list.append(article_dict)
-                    print(f'**INFO: article {url} successfully scrapped')
+                    logging.info(f'**INFO: article {url} successfully scrapped')
 
             except Exception as e:
-                print(f'**INFO: An exception occurred: {str(e)}')
+                logging.info(f'**INFO: An exception occurred: {str(e)}')
 
         return article_list

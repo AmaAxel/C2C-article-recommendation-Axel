@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import requests
 from bs4 import BeautifulSoup
 import re
+import logging
 
 
 class BBCArticleScraper:
@@ -18,6 +19,16 @@ class BBCArticleScraper:
         self.config.language = 'en'  # Set the language to English
         self.main_url = 'https://www.bbc.com/news'
         
+    def check_validity(self, article_dict):
+        validity = True
+        yesterday_date = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
+        if len(article_dict['content']) < 1000 \
+                or article_dict['publishedAt'] != yesterday_date \
+                or 'Video' in article_dict['description']:
+            validity = False
+
+        return validity
+
     def clean_bbc_articles(self, article_dict):
         # remove special characters
         text = article_dict['content'].replace('\n', '. ').replace("'", '"')
@@ -29,6 +40,10 @@ class BBCArticleScraper:
         text = re.sub(r'\.{2,}', '.', text)
         # add a space after each dot
         text = re.sub(r'\.(?=\S)', '. ', text)
+        # remove the ". " that sometime exists at the begining of the scrapped articles
+        text = text.lstrip(". ")
+        # finally replace double quotes by simple quotes back
+        text = text.replace('"', "'")
         # truncate the end of the article as it contains all of of rubbish not related to the article
         shortened_str = text[:-1300]
         # Find the last occurrence of ". "
@@ -118,13 +133,18 @@ class BBCArticleScraper:
                 }
                 
                 article_dict = self.clean_bbc_articles(article_dict)
+                validity = self.check_validity(article_dict)
+
+                if validity:
+                    article_list.append(article_dict)
+                    logging.info(f'**INFO: article {url} successfully scrapped')
 
                 # Save if the article is long enough
-                if len(article_dict['content']) > 1000:
+                if validity:
                     article_list.append(article_dict)
-                    print(f'**INFO: article {url} successfully scrapped')
+                    logging.info(f'**INFO: article {url} successfully scrapped')
 
             except Exception as e:
-                print(f'**INFO: An exception occurred: {str(e)}')
+                logging.info(f'**INFO: An exception occurred: {str(e)}')
 
         return article_list
