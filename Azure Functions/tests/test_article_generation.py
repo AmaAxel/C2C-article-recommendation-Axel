@@ -2,71 +2,35 @@ import unittest
 import sys
 import os
 
-from newsapi.newsapi_client import NewsApiClient
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from article_generation_TimerTrigger.clean_article import clean_content
-from article_generation_TimerTrigger.extract_content import extract_to_dict
-
-
+from article_generation_TimerTrigger.bbc_scraper import BBCArticleScraper
+from article_generation_TimerTrigger.lemonde_scraper import LeMondeArticleScraper
 
 class TestExtractedArticle(unittest.TestCase):
-
-    """"
-    This test checks that the data we are scrapping from the BBC is consistant with the 
-    dictionary format our functions are using
     """
-    def test_extracted_article_structure(self):
+    This test checks that the data we are scraping from different sources is consistent with the
+    dictionary format our functions are using.
+    """
 
-        newsapi_key = '6fdb9fb9f5154d1c8073d732a744fb9f'
-        # Search for articles using the everything endpoint
-        newsapi = NewsApiClient(api_key=newsapi_key) 
+    def test_extracted_article_structure(self, scraper):
+        articles = scraper.scrape_articles()
 
-        # Search for articles using the everything endpoint
-        articles = newsapi.get_everything(sources='bbc-news')
-
-        # Retrieve the full content of each article using the urlToImage field
-        for article in articles['articles']:
-            article = extract_to_dict(article)
-
-            # Check if article is a dictionary
+        for article in articles:
             self.assertIsInstance(article, dict)
 
-            # Check if article has the expected keys
-            expected_keys = ['title', 'description', 'publishedAt', 'content']
+            expected_keys = ['title', 'publishedAt', 'section', 'URL', 'description', 'content']
             for key in expected_keys:
                 self.assertIn(key, article)
 
-            # Check if none of the values are empty strings
             for key, value in article.items():
                 self.assertNotEqual(value, '', f"Value for '{key}' is an empty string.")
 
-            break
+    def test_extracted_bbc_article_structure(self):
+        self.test_extracted_article_structure(BBCArticleScraper())
 
-
-class TestCleanContentFunction(unittest.TestCase):
-
-    """
-    This test checks if the cleaned_content() function cleans the text data 
-    of the articles in the way it's supposed to
-    """
-    def test_clean_content_removes_html_tags(self):
-        # Input content with HTML tags
-        input_content = "This is sample of text.Media caption .End of sample..."
-
-        # Expected cleaned content without HTML tags
-        expected_cleaned_content = "This is sample of text. End of sample."
-
-        ############# SECTION TO BE COMPLETED BY CONSULTANT ################
-
-        # Call the clean_content function
-        cleaned_content = clean_content(input_content)
-
-        # Assert that the function cleaned the content as expected
-        self.assertEqual(cleaned_content, expected_cleaned_content)
-
-        ############# SECTION TO BE COMPLETED BY CONSULTANT ################
+    def test_extracted_lemonde_article_structure(self):
+        self.test_extracted_article_structure(LeMondeArticleScraper())
 
 if __name__ == '__main__':
     unittest.main()

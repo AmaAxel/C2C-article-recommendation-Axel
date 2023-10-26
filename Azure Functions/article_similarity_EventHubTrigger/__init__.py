@@ -15,7 +15,7 @@ from gremlin_python.process.anonymous_traversal import traversal
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
 from sentence_transformers import SentenceTransformer, util
 
-from .label_article import get_labels, get_best_labels
+#from .label_article import get_labels, get_best_labels
 from .compute_similarity import compute_similarity
 
 
@@ -54,97 +54,79 @@ async def insert_article(new_article):
 
 
     # Check if article is already in DB
-    # Define the Gremlin query to check if there is an existing article with similar title and property
     check_query_already_exist = """
-        g.V().has('article', 'title', title)
-                                """
-
-    # Execute the Gremlin query with the given article properties to check if an article already exists
+        g.V().has('article', 'URL', URL)
+    """
     result_set = gremlin_client.submit(check_query_already_exist, {
-            'title': new_article['title'],
-            })
-    
+        'URL': new_article['URL']
+    })
+        
     # If there are no existing articles, add the new article vertex
     if not result_set.all().result():
 
         # Define the Gremlin query to insert the article vertex
-
         # Create a dictionary of properties for the new article
-        properties = {
-                    'title': new_article['title'],
-                    'description': new_article['description'],
-                    'content': new_article['content'],
-                    'publishedAt': new_article['publishedAt'],
-                    'partitionKey': new_article['publishedAt']
-        }
+        new_title = new_article['title']
+        new_publishedAt = new_article['publishedAt']
+        new_section = new_article['section']
+        new_URL = new_article['URL']
+        new_description = new_article['description']
+        new_content = new_article['content']
 
-        # Add properties for each labels and its corresponding score
-        label_scores = await get_labels(new_article['title'])
-        for label, score in label_scores.items():
-            properties[label] = score
 
-        # get the best labels of the new article
-        best_labels = await get_best_labels(properties)
-
-        # Construct the query to select articles with the specified properties and label
-        query = "g.V().hasLabel('article')"
-        for label in best_labels:
-            query += ".has('{}', lte(2))".format(label)
-        query += ".limit(400).values('title').fold()"
-
-        # Get the same-category articles
-        all_titles = gremlin_client.submit(query)
-        all_titles = all_titles.all().result()
-        all_titles = list(all_titles[0])
-            
-        # Construct the Gremlin query with the properties
-        add_query = """
+        insert_query = f"""
                     g.addV('article')
-                        .property('title', title)
-                        .property('description', description)
-                        .property('content', content)
-                        .property('publishedAt', publishedAt)
-                        .property('partitionKey', partitionKey)
+                        .property('title', '''{new_title}''')
+                        .property('publishedAt', '{new_publishedAt}')
+                        .property('section', '{new_section}')
+                        .property('URL', '{new_URL}')
+                        .property('description', '''{new_description}''')
+                        .property('content', '''{new_content}''')
+                        .property('partitionKey', '{new_publishedAt}')
                     """
-
-        # Add properties for each label and its corresponding score to the query
-        for label, score in label_scores.items():
-            add_query += f"\n.property('{label}', {score})"
-
-        # Execute the Gremlin query with the given article properties
-        gremlin_client.submitAsync(add_query, properties)
-        logging.info('**INFO: Article successfully inserted')
+        gremlin_client.submitAsync(insert_query)
 
         # Delete latest article (replacing the oldest article with the newest)
-        # query = "g.V().hasLabel('article').order().by('publishedAt').limit(1).sideEffect(drop())"
-        # result_set = gremlin_client.submit(query)
+        # query_delete_last_article = "g.V().hasLabel('article').order().by('publishedAt').limit(1).sideEffect(drop())"
+        # result_set = gremlin_client.submit(query_delete_last_article)
 
-        # Loop over all titles in the list and compute similarity
-        for title in all_titles:
+        # Fetch the last 250 urls
+        query_recent_urls = "g.V().hasLabel('article').order().by('publishedAt', decr).limit(250).values('URL').fold()"
 
-            # Query the content property of the article with the matching title
-            query = "g.V().hasLabel('article').has('title', title).project('title', 'description', 'content').by('title').by('content').by('description').fold()"
-            result = gremlin_client.submit(query, {'title': title}).all().result()
+        # Get the same-category articles
+        recent_urls = gremlin_client.submit(query_recent_urls)
+        recent_urls = recent_urls.all().result()
+        recent_urls = list(recent_urls[0])
+
+        # Loop over all recent urls in the list, fetch content and compute similarity
+        for url in recent_urls:
+
+            # Query the content property of the article with the matching url
+            query_recent_article = "g.V().hasLabel('article').has('URL', URL).project('title', 'description', 'content').by('title').by('content').by('description').fold()"
+            result = gremlin_client.submit(query_recent_article, {'URL': url}).all().result()
             # Extract the nested dictionary
-            old_article = result[0][0]
+            recent_article = result[0][0]
 
-            sim = compute_similarity(model, old_article, new_article)
+            # compute similarity
+            sim = compute_similarity(model, recent_article, new_article)
 
-            # prepare relationship query to used in between similar articles
-            relationship_query = """
-                        g.V().has('article', 'title', title1).as('a')
-                            .V().has('article', 'title', title2).as('b')
+            # If the similarity score is above the threshold, create a relationship between the articles
+            if sim >= sim_threshold:
+
+                # prepare relationship query to used in between similar articles
+                query_create_relationship = """
+                        g.V().has('article', 'URL', url1).as('a')
+                            .V().has('article', 'URL', url2).as('b')
                             .coalesce(
                                 select('a').outE('similarity').where(inV().as('b')),
                                 addE('similarity').from('a').to('b').property('value', sim)
                             )
                                         """
-            # If the similarity score is above the threshold, create a relationship between the articles
-            if sim >= sim_threshold:
+            
                 # Create a relationship between the new article and the current article
-                result_set = gremlin_client.submitAsync(relationship_query, {
-                                'title1': new_article['title'],
-                                'title2': title,
+                result_set = gremlin_client.submitAsync(query_create_relationship, {
+                                'url1': new_article['URL'],
+                                'url2': url,
                                 'sim': sim
                         })
 
@@ -162,10 +144,10 @@ async def insert_article(new_article):
 
 nest_asyncio.apply()
 async def main(events: func.EventHubEvent):
-
     try:
         for event in events:
 
+            # read the incoming article inside each event
             ############# SECTION TO BE COMPLETED BY CONSULTANT ################
             message_body = event.get_body().decode('utf-8')
             new_article = json.loads(message_body)
@@ -173,9 +155,15 @@ async def main(events: func.EventHubEvent):
             logging.info(new_article)
             ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 
+            # once the article extracted as a dictionary, insert this article to the graph database
             await insert_article(new_article)
     
     except Exception as e:
         logging.error(f"Error processing event: {str(e)}")
 
 
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        logging.error(f"Error running main: {str(e)}")
