@@ -26,7 +26,7 @@ def main(timer: func.TimerRequest, outputMessage: func.Out[str]):
     
     # use the bbc_scrapper to extract the BBC articles currently on the website
     scraper = BBCArticleScraper()
-    articles = scraper.scrape_bbc_articles()
+    articles = scraper.scrape_articles()
 
     # iterate through the articles and send the content to Azure Event Hub
     for article in articles:
