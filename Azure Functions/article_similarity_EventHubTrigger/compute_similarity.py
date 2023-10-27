@@ -15,12 +15,10 @@ def compute_similarity(model, article_A, article_B):
 
     ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 
-    content_enriched = article_A['title'] + ' ' + article_A['description'] + ' ' + article_A['content']
-    new_content_enriched = article_B['title'] + ' ' + article_B['description'] + ' ' + article_B['content']
-
-    embedding_article = model.encode(content_enriched, convert_to_tensor=True)
-    embedding_new_article = model.encode(new_content_enriched, convert_to_tensor=True)
-    sim = util.pytorch_cos_sim(embedding_new_article, embedding_article)[0][0].item()
+    #############
+    #############
+    #############
+    #############
 
     ############# SECTION TO BE COMPLETED BY CONSULTANT ################
 
