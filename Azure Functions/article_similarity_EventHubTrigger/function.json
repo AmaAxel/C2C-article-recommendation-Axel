@@ -5,8 +5,8 @@
       "type": "eventHubTrigger",
       "name": "events",
       "direction": "in",
-      "eventHubName": "article-generation-solution",
-      "connection": "eventhub_connection_string_listener",
+      "eventHubName": "##########",
+      "connection": "##########",
       "cardinality": "many",
       "consumerGroup": "$Default"
     }

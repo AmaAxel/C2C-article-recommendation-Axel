@@ -12,8 +12,8 @@
       "name": "outputMessage",
       "type": "eventHub",
       "direction": "out",
-      "eventHubName": "eventhub_article_generation",
-      "connection": "eventhub_connection_string_sender"
+      "eventHubName": "#######",
+      "connection": "########"
     }
   ]
 }
