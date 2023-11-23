@@ -70,6 +70,6 @@ jobs:
           app-name: 'hands-on-C2C-Axel'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3966BECC08CC4E0BB03CECB53E84B435 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_743D6D96916D4470B2CCE2919642355F }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
